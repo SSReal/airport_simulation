@@ -22,26 +22,30 @@ class Passenger(object):
         #wait for arrival
         delta = self.arrival_t - self.airport.env.now
         yield self.airport.env.timeout(delta)
+        print("time:", self.airport.env.now, "passenger arrived")
 
         #check in 
         with self.airport.checkin.request() as request:
             yield request
             #do the check in
             yield self.airport.env.timeout(random.randint(1,5)) # 1-5 minutes to check in
-        
+        print("time:", self.airport.env.now, "checking in done")
+
         #security
         with self.airport.security.request() as request:
             yield request
             #do the security
             yield self.airport.env.timeout(random.randint(2,6)) # 2-6 minutes
-        
+        print("time:", self.airport.env.now, "security check done")
+
         #boarding
         with self.airport.boarding.request() as request:
             yield request
             #do the boarding
             yield self.airport.env.timeout(random.randint(1,2)) #1-2 minutes to board
+        print("time:", self.airport.env.now, "boarding done")
         
-        print(f"passenger arrived at {self.arrival_t} and done at {self.airport.env.now}")
+        print("time:", self.airport.env.now, f"passenger arrived at {self.arrival_t} and done at {self.airport.env.now}")
 
 airport = Airport()
 airport.env.run()
