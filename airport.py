@@ -2,6 +2,11 @@ import simpy
 import random
 import matplotlib.pyplot as plt
 
+import sys
+from PyQt5.QtCore import QSize
+from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QApplication
+from PyQt5.QtGui import QFont
+
 class Airport(object):
     totalCheckin = 0
     totalSecurity = 0
@@ -12,6 +17,9 @@ class Airport(object):
     avgSecurity = []
     def __init__(self, num_checkin = 5, num_security = 5, num_boarding = 1, num_passengers = 100, arrival_limit = 100):
         self.env = simpy.Environment()
+        self.num_checkin = num_checkin
+        self.num_security = num_security
+        self.num_boarding = num_boarding
         self.checkin = simpy.Resource(self.env, num_checkin)
         self.security = simpy.Resource(self.env, num_security)
         self.boarding = simpy.Resource(self.env, num_boarding)
@@ -94,6 +102,50 @@ class Passenger(object):
 
             plt.show()
             
-            
-airport = Airport()
-airport.env.run()
+class Gui(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Airport Simulation")
+        self.setMinimumSize(QSize(960, 720))
+        self.airport = Airport()
+        self.checkin_labels = [
+            QLabel(f"[C]", self) for i in range(self.airport.num_checkin)
+        ]
+        self.security_labels = [
+            QLabel(f"[S]", self) for i in range(self.airport.num_security)
+        ]
+        self.boarding_labels = [
+            QLabel(f"[B]", self) for i in range(self.airport.num_boarding)
+        ]
+        c_x = 100
+        c_y = 50
+        s_x = 400
+        s_y = 50
+        b_x = 700
+        b_y = 50
+        for i in range(self.airport.num_checkin):
+            self.checkin_labels[i].move(c_x + i*50, c_y)
+            self.checkin_labels[i].adjustSize()
+        for i in range(self.airport.num_security):
+            self.security_labels[i].move(s_x + i*50, s_y)
+            self.security_labels[i].adjustSize()
+        for i in range(self.airport.num_boarding):
+            self.boarding_labels[i].move(b_x + i*50, b_y)
+            self.boarding_labels[i].adjustSize()
+
+
+
+
+
+
+app = QApplication(sys.argv)
+myfont = QFont()
+myfont.setWeight(60)
+myfont.setPointSize(24)
+app.setFont(myfont, 'QLabel')
+gui = Gui()
+gui.show()
+sys.exit(app.exec_())
+
+
+# airport.env.run()
