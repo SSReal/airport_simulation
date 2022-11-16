@@ -47,9 +47,9 @@ class Passenger(object):
 
         #check in 
         with self.airport.checkin.request() as request:
+            self.airport.curr_checkin += 1
             yield request
             #do the check in
-            self.airport.curr_checkin += 1
             yield self.airport.env.timeout(random.randint(1,5)) # 1-5 minutes to check in
             self.airport.curr_checkin -= 1
         print("time:", self.airport.env.now, "checking in done")
@@ -58,9 +58,9 @@ class Passenger(object):
 
         #security
         with self.airport.security.request() as request:
+            self.airport.curr_security+=1
             yield request
             #do the security
-            self.airport.curr_security+=1
             yield self.airport.env.timeout(random.randint(2,6)) # 2-6 minutes
             self.airport.curr_security -= 1
         print("time:", self.airport.env.now, "security check done")
@@ -68,9 +68,9 @@ class Passenger(object):
 
         #boarding
         with self.airport.boarding.request() as request:
+            self.airport.curr_boarding += 1
             yield request
             #do the boarding
-            self.airport.curr_boarding += 1
             yield self.airport.env.timeout(random.randint(1,2)) #1-2 minutes to board
             self.airport.curr_boarding -= 1
         print("time:", self.airport.env.now, "boarding done")
